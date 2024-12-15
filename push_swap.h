@@ -1,90 +1,98 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   push_swap.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jboyreau <marvin@42.fr>                    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/27 22:43:03 by jboyreau          #+#    #+#             */
-/*   Updated: 2023/01/29 11:34:48 by jboyreau         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
-# define SIZE 5
-# define SIZE_SUB_THREE 3
-# define LAST_INDEX 4
+# define NB_SORTING_ELEM 6
+# define NB_MAX_COMB 50
+# define MC 9
+# define ML 6
+# define MI 5 
 
-typedef struct s_lst
+# include <stddef.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdint.h>
+# include <stdio.h>
+
+typedef enum {
+	END = 0, 
+	PA,
+	PB,
+	SA,
+	SB,
+	RA,
+	RRA,
+	RB,
+	RRB,
+	RRR,
+	RR,
+	SS,
+} t_operations;
+
+typedef struct s_target
 {
-	char			pivot;
-	int				data;
-	struct s_lst	*next;
-	struct s_lst	*prev;
-}					t_lst;
+	int	num;
+	int op;
+	int range;
+	int flag;
+} t_target;
 
-typedef struct s_actions
+typedef struct s_list
 {
-	unsigned int	*index;
-	char			*actions;
-}					t_actions;
+	int	num;
+	struct s_list *next;
+	struct s_list *prev;
+} t_list;
 
-typedef struct s_stack
-{
-	t_actions			ac;
-	t_lst				*alloc;
-	t_lst				*fa;
-	t_lst				*fb;
-	t_lst				*la;
-	t_lst				*lb;
-	long long int		*tab;
-	char				*p_tab;
-	unsigned int		size_tab;
-	unsigned int		ip;
-	unsigned int		size_stack;
-	unsigned int		size_block;
-	unsigned char		n;
-}						t_stack;
+typedef struct s_keystone{
+	int num;
+	char on_off;
+}	t_keystone;
 
-int				ft_str_count(char **argv, int argc, long long int **tab);
-int				ft_word_count(char *s, char *save, long long int **tab, int i);
-char			ft_check_double(long long int *tab, int size);
-char			ft_pa(t_lst **sa, t_lst **sb, t_stack *l);
-char			ft_pb(t_lst **sa, t_lst **sb, t_stack *l);
-char			ft_s(t_lst **s, t_stack *l, char mode);
-char			ft_r(t_lst **s, t_stack *l, char mode);
-char			ft_revr(t_lst **s, t_stack *l, char mode);
-void			ft_fill_actions(char data, t_actions ac);
-void			ft_pa_print(t_lst **sa, t_lst **sb, t_stack *l, t_actions ac);
-void			ft_pb_print(t_lst **sa, t_lst **sb, t_stack *l, t_actions ac);
-void			ft_s_print(t_lst **s, t_stack *l, char mode, t_actions ac);
-void			ft_r_print(t_lst **s, t_stack *l, char mode, t_actions ac);
-void			ft_revr_print(t_lst **s, t_stack *l, char mode, t_actions ac);
-void			ft_show(t_actions ac);
-char			ft_quick_sort(t_stack *s);
-int				ft_size_block(char *p_tab, int start);
-void			ft_push_b(t_stack *s, int i);
-void			ft_push_a(t_stack *s);
-void			ft_p_tab_init(char *p_tab, int size);
-char			ft_costr_b(t_lst *l, t_lst *f, int data);
-char			ft_costr_a(t_lst *l, t_lst *f, int data);
-char			ft_tofind_b(t_lst *l, int data);
-char			ft_tofind_a(t_lst *l, int data);
-int				ft_lstlen(t_lst *l);
-char			ft_is_presort(char *p_tab, int size);
-void			ft_turbo_insertion(t_stack *s, int i);
-void			ft_brut_force(t_stack *s, int i, char j);
-char			ft_brut_force_to_a(t_stack *s, int i, char j, char n);
-char			ft_issort0(t_lst *fa, t_stack *s);
-char			ft_apply0(t_lst **fa, t_stack *s, int data);
-char			ft_test0(t_lst *fa, t_stack *s, char *tab);
-void			ft_init02(t_lst *stacks, t_stack *s, unsigned int i);
-void			ft_init0(char *tab, t_lst *stacks, t_stack *s, int len);
-char			ft_issort(t_lst *fa, t_stack *s);
-char			ft_apply(t_lst **fb, t_stack *s, int data);
-char			ft_test(t_lst *fb, t_stack *s, char *tab);
-void			ft_init2(t_lst *stacks, t_stack *s, t_lst *lb_cpy, int i);
-void			ft_init(char *tab, t_lst *stacks, t_stack *s, int len);
-long long int	ft_atoi_s(char *s, char sign, long long int sum);
+typedef struct s_array{
+	int save;
+	int size;
+	int overflow;
+	int index_actions;
+	int count_keystone;
+	int block_size;
+	t_keystone *tab; 
+	t_list *origin;
+	t_list *first_a;
+	t_list *first_b;
+	t_list *last_a;
+	t_list *last_b;
+	t_list *v_stack;
+	t_operations *actions;
+} t_array; 
+
+int		ft_atoi_overflow(char *str, int *overflow, int *i);
+int		get_size(int argc, char *str_argv);
+int		fill_tab_str(int argc, char *str_argv, t_array *tab_int);
+int		fill_tab_argv(int argc, char **argv, t_array *tab_int);
+int	init_brute_force(t_list *first_a, t_array *tab_int);
+int 	ft_unsorted(t_list *v_stack);
+int 	ft_brute_force(t_array *v_stack);
+void 	set_comb(int *comb, int index);
+void	ft_init_list(t_list *stack, int size);
+void	ft_swap(int *a, int *b);
+void	ft_sort_int_array(t_keystone *array, int size);
+void	ft_swap_a(int *index, t_list *first_a, t_operations *actions);
+void	ft_swap_b(int *index, t_list* first_b, t_operations *actions);
+void	ft_push_b(int *index, t_array *tab_int, t_operations *actions);
+void	ft_rra(int *index, t_array *tab_int, t_operations *actions);
+void	ft_push_a(int *index, t_array *tab_int, t_operations *actions);
+void	ft_rrb(int *index, t_array *tab_int, t_operations *actions);
+void	ft_ra(int *index, t_array *tab_int, t_operations *actions);
+void	ft_rb(int *index, t_array *tab_int, t_operations *actions);
+void	bforce_ft_swap_a(t_list *first_a);
+void	bforce_ft_swap_b(t_list *first_b);
+void	bforce_ft_push_b(t_array *tab_int);
+void	bforce_ft_push_a(t_array *tab_int);
+void	bforce_ft_rra(t_array *tab_int);
+void	bforce_ft_rrb(t_array *tab_int);
+void	bforce_ft_ra(t_array *tab_int);
+void	bforce_ft_rb(t_array *tab_int);
+void 	sorting_algo(t_array *tab_int);
+//debug
+void debug_printlist(t_list *stack);
+
 #endif
